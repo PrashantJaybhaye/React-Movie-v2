@@ -1,67 +1,190 @@
 import React from 'react';
 import WatchlistButton from './WatchlistButton';
 
-const MovieCard = ({ 
+const MovieCard = ({
     movie,
-    onClick 
+    onClick,
+    index = 0
 }) => {
     const { id, title, vote_average, poster_path, release_date, original_language, overview } = movie;
 
+    const getRatingColor = (rating) => {
+        if (rating >= 7) return '#22c55e';
+        if (rating >= 5) return '#eab308';
+        return '#ef4444';
+    };
+
     return (
-        <div className="group relative bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden border border-white/20 hover:border-white/40 transition-all duration-300 transform hover:scale-105 cursor-pointer" onClick={onClick}>
-            <div className="aspect-[2/3] relative overflow-hidden">
+        <div
+            className="group"
+            onClick={onClick}
+            style={{
+                position: 'relative',
+                borderRadius: '18px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                animation: `fadeInUp 0.5s ease-out ${index * 0.06}s both`,
+            }}
+            onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.borderColor = 'rgba(229, 9, 20, 0.25)';
+                e.currentTarget.style.boxShadow = '0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(229,9,20,0.08)';
+            }}
+            onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.boxShadow = 'none';
+            }}
+        >
+            {/* Poster */}
+            <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '2/3' }}>
                 <img
                     src={poster_path ? `https://image.tmdb.org/t/p/w500/${poster_path}` : '/no-movie.png'}
                     alt={title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                    className="group-hover:scale-110"
                 />
-                
+
                 {/* Watchlist Button */}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                }} className="group-hover:!opacity-100">
                     <WatchlistButton movie={movie} size="small" />
                 </div>
 
                 {/* Rating Badge */}
                 {vote_average > 0 && (
-                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
-                        <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '4px 10px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        color: '#fff',
+                        background: 'rgba(0,0,0,0.7)',
+                        backdropFilter: 'blur(10px)',
+                        border: `1px solid ${getRatingColor(vote_average)}30`,
+                    }}>
+                        <svg width="12" height="12" viewBox="0 0 20 20" fill={getRatingColor(vote_average)}>
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span>{vote_average.toFixed(1)}</span>
                     </div>
                 )}
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                {/* View Details Button */}
-                <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="w-full bg-white/20 backdrop-blur-sm text-white py-2 px-4 rounded-lg font-medium hover:bg-white/30 transition-colors duration-200">
+                {/* Bottom Gradient Overlay */}
+                <div className="opacity-0 group-hover:opacity-100" style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 40%, rgba(22,0,0,0.95) 100%)',
+                    transition: 'opacity 0.4s ease',
+                }} />
+
+                {/* View Details */}
+                <div className="opacity-0 group-hover:opacity-100" style={{
+                    position: 'absolute',
+                    bottom: '16px',
+                    left: '16px',
+                    right: '16px',
+                    transition: 'opacity 0.4s ease, transform 0.4s ease',
+                }}>
+                    <button style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '10px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        color: '#fff',
+                        background: 'linear-gradient(135deg, rgba(229,9,20,0.8), rgba(255,59,63,0.8))',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(229,9,20,0.3)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                    }}>
                         View Details
                     </button>
                 </div>
             </div>
 
-            <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-white font-semibold text-sm line-clamp-2 flex-1 group-hover:text-blue-300 transition-colors duration-200">
-                        {title}
-                    </h3>
-                </div>
+            {/* Content */}
+            <div style={{ padding: '16px' }}>
+                <h3 style={{
+                    color: '#fff',
+                    fontWeight: '600',
+                    fontSize: '15px',
+                    lineHeight: '1.4',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    fontFamily: '"Space Grotesk", sans-serif',
+                    marginBottom: '8px',
+                    transition: 'color 0.3s',
+                }} className="group-hover:!text-red-300">
+                    {title}
+                </h3>
 
-                <div className="flex items-center space-x-2 text-xs text-gray-400 mb-2">
-                    <span>{release_date ? release_date.split('-')[0] : 'N/A'}</span>
-                    <span>•</span>
-                    <span>{original_language?.toUpperCase()}</span>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '12px',
+                    color: '#6b7280',
+                    marginBottom: '8px',
+                }}>
+                    <span style={{
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                    }}>
+                        {release_date ? release_date.split('-')[0] : 'N/A'}
+                    </span>
+                    <span style={{
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                    }}>
+                        {original_language}
+                    </span>
                 </div>
 
                 {overview && (
-                    <p className="text-gray-300 text-xs line-clamp-3">
-                        {overview.length > 120 ? `${overview.substring(0, 120)}...` : overview}
+                    <p style={{
+                        color: '#6b7280',
+                        fontSize: '12px',
+                        lineHeight: '1.5',
+                        overflow: 'hidden',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                    }}>
+                        {overview}
                     </p>
                 )}
             </div>
         </div>
     );
 };
-export default MovieCard
+
+export default MovieCard;

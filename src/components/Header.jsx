@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
 import { getDisplayName, getUserInitials } from '../utils/auth';
@@ -13,6 +13,9 @@ const Header = () => {
     const [authForm, setAuthForm] = useState({ email: '', password: '', name: '' });
     const [authError, setAuthError] = useState('');
     const [authLoading, setAuthLoading] = useState(false);
+    const location = useLocation();
+
+    const isActive = (path) => location.pathname === path;
 
     const handleAuthSubmit = async (e) => {
         e.preventDefault();
@@ -54,87 +57,241 @@ const Header = () => {
 
     return (
         <>
-            <header className="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
+            <header style={{
+                background: 'rgba(22, 0, 0, 0.7)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 50,
+                margin: 0,
+                padding: 0,
+            }}>
+                <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
                         {/* Logo */}
-                        <Link to="/" className="flex items-center space-x-2">
-                            <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                🎬 Funverse
+                        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+                            <div style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '10px',
+                                background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '18px',
+                                boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)',
+                            }}>
+                                🎬
                             </div>
+                            <span style={{
+                                fontSize: '22px',
+                                fontWeight: '700',
+                                fontFamily: '"Space Grotesk", sans-serif',
+                                background: 'linear-gradient(135deg, #fff 0%, #FECECE 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                letterSpacing: '-0.5px',
+                            }}>
+                                Funverse
+                            </span>
                         </Link>
 
                         {/* Navigation */}
-                        <nav className="flex items-center space-x-6">
+                        <nav style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Link
                                 to="/"
-                                className="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
+                                style={{
+                                    padding: '8px 16px',
+                                    borderRadius: '10px',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    color: isActive('/') ? '#fff' : 'rgba(255,255,255,0.5)',
+                                    background: isActive('/') ? 'rgba(229, 9, 20, 0.12)' : 'transparent',
+                                    border: isActive('/') ? '1px solid rgba(229, 9, 20, 0.2)' : '1px solid transparent',
+                                    textDecoration: 'none',
+                                    transition: 'all 0.3s ease',
+                                }}
                             >
                                 Home
                             </Link>
 
                             <Link
                                 to="/watchlist"
-                                className="relative text-gray-300 hover:text-white transition-colors duration-200 font-medium flex items-center space-x-1"
+                                style={{
+                                    position: 'relative',
+                                    padding: '8px 16px',
+                                    borderRadius: '10px',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    color: isActive('/watchlist') ? '#fff' : 'rgba(255,255,255,0.5)',
+                                    background: isActive('/watchlist') ? 'rgba(229, 9, 20, 0.12)' : 'transparent',
+                                    border: isActive('/watchlist') ? '1px solid rgba(229, 9, 20, 0.2)' : '1px solid transparent',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    transition: 'all 0.3s ease',
+                                }}
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
-                                <span>Watchlist</span>
+                                Watchlist
                                 {watchlist.length > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '-4px',
+                                        right: '-4px',
+                                        background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                                        color: '#fff',
+                                        fontSize: '10px',
+                                        fontWeight: '700',
+                                        borderRadius: '50%',
+                                        width: '18px',
+                                        height: '18px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        boxShadow: '0 2px 8px rgba(229, 9, 20, 0.4)',
+                                    }}>
                                         {watchlist.length}
                                     </span>
                                 )}
                             </Link>
 
-                            {/* Auth Section */}
+                            {/* Auth */}
                             {user ? (
-                                <div className="relative">
+                                <div style={{ position: 'relative', marginLeft: '8px' }}>
                                     <button
                                         onClick={() => setShowUserMenu(!showUserMenu)}
-                                        className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200"
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px',
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            borderRadius: '12px',
+                                            padding: '6px 14px 6px 6px',
+                                            cursor: 'pointer',
+                                            color: 'rgba(255,255,255,0.7)',
+                                            transition: 'all 0.3s ease',
+                                        }}
                                     >
-                                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                                        <div style={{
+                                            width: '32px',
+                                            height: '32px',
+                                            borderRadius: '8px',
+                                            background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: '#fff',
+                                            fontWeight: '600',
+                                            fontSize: '13px',
+                                        }}>
                                             {getUserInitials(user)}
                                         </div>
-                                        <span className="hidden sm:block font-medium">{getDisplayName(user)}</span>
+                                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#fff' }}>
+                                            {getDisplayName(user)}
+                                        </span>
                                         <svg
-                                            className={`w-4 h-4 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
+                                            width="14" height="14"
+                                            style={{ transition: 'transform 0.3s', transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0)' }}
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         >
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </button>
 
                                     {showUserMenu && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg rounded-lg shadow-lg border border-white/10 py-2">
-                                            <div className="px-4 py-2 border-b border-white/10">
-                                                <p className="text-sm text-gray-300">Logged in as</p>
-                                                <p className="text-sm font-medium text-white truncate">{user.email}</p>
+                                        <div style={{
+                                            position: 'absolute',
+                                            right: 0,
+                                            marginTop: '8px',
+                                            width: '220px',
+                                            background: 'rgba(22, 0, 0, 0.95)',
+                                            backdropFilter: 'blur(30px)',
+                                            borderRadius: '14px',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                                            overflow: 'hidden',
+                                            animation: 'slideDown 0.2s ease-out',
+                                            zIndex: 60,
+                                        }}>
+                                            <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                                <p style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Signed in as</p>
+                                                <p style={{ fontSize: '13px', fontWeight: '600', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</p>
                                             </div>
-                                            <Link
-                                                to="/profile"
-                                                onClick={() => setShowUserMenu(false)}
-                                                className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
-                                            >
-                                                Profile
-                                            </Link>
-                                            <button
-                                                onClick={handleLogout}
-                                                className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-white/10 transition-colors duration-200"
-                                            >
-                                                Sign Out
-                                            </button>
+                                            <div style={{ padding: '6px' }}>
+                                                <Link
+                                                    to="/profile"
+                                                    onClick={() => setShowUserMenu(false)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '10px',
+                                                        padding: '10px 12px',
+                                                        borderRadius: '8px',
+                                                        fontSize: '13px',
+                                                        color: '#FECECE',
+                                                        textDecoration: 'none',
+                                                        transition: 'background 0.2s',
+                                                    }}
+                                                    onMouseEnter={e => e.target.style.background = 'rgba(229,9,20,0.1)'}
+                                                    onMouseLeave={e => e.target.style.background = 'transparent'}
+                                                >
+                                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    Profile
+                                                </Link>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '10px',
+                                                        padding: '10px 12px',
+                                                        borderRadius: '8px',
+                                                        fontSize: '13px',
+                                                        color: '#f87171',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        width: '100%',
+                                                        textAlign: 'left',
+                                                        transition: 'background 0.2s',
+                                                    }}
+                                                    onMouseEnter={e => e.target.style.background = 'rgba(248,113,113,0.1)'}
+                                                    onMouseLeave={e => e.target.style.background = 'transparent'}
+                                                >
+                                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                    </svg>
+                                                    Sign Out
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             ) : (
                                 <button
                                     onClick={() => { setShowAuthModal(true); setIsSignUp(false); }}
-                                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm"
+                                    style={{
+                                        marginLeft: '8px',
+                                        padding: '8px 20px',
+                                        borderRadius: '10px',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        color: '#fff',
+                                        background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)',
+                                        transition: 'all 0.3s ease',
+                                    }}
                                 >
                                     Sign In
                                 </button>
@@ -143,10 +300,9 @@ const Header = () => {
                     </div>
                 </div>
 
-                {/* Close user menu when clicking outside */}
                 {showUserMenu && (
                     <div
-                        className="fixed inset-0 z-40"
+                        style={{ position: 'fixed', inset: 0, zIndex: 40 }}
                         onClick={() => setShowUserMenu(false)}
                     />
                 )}
@@ -154,29 +310,104 @@ const Header = () => {
 
             {/* Auth Modal */}
             {showAuthModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                    <div className="bg-gray-900/95 border border-white/10 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-8 relative animate-fade-in">
-                        {/* Close Button */}
+                <div style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(8px)',
+                }}>
+                    <div style={{
+                        background: 'linear-gradient(180deg, rgba(40, 10, 10, 0.98), rgba(22, 0, 0, 0.98))',
+                        border: '1px solid rgba(229, 9, 20, 0.15)',
+                        borderRadius: '24px',
+                        boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 60px rgba(229, 9, 20, 0.08)',
+                        width: '100%',
+                        maxWidth: '420px',
+                        margin: '0 16px',
+                        padding: '40px',
+                        position: 'relative',
+                        animation: 'fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}>
+                        {/* Close */}
                         <button
                             onClick={() => { setShowAuthModal(false); setAuthError(''); }}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                            style={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '10px',
+                                padding: '8px',
+                                cursor: 'pointer',
+                                color: '#9ca3af',
+                                display: 'flex',
+                                transition: 'all 0.3s',
+                            }}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
 
-                        <h2 className="text-2xl font-bold text-white mb-6 text-center">
+                        {/* Icon */}
+                        <div style={{
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, rgba(229,9,20,0.15), rgba(255,59,63,0.15))',
+                            border: '1px solid rgba(229,9,20,0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 20px',
+                            fontSize: '24px',
+                        }}>
+                            {isSignUp ? '✨' : '👋'}
+                        </div>
+
+                        <h2 style={{
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            color: '#fff',
+                            textAlign: 'center',
+                            marginBottom: '6px',
+                            fontFamily: '"Space Grotesk", sans-serif',
+                        }}>
                             {isSignUp ? 'Create Account' : 'Welcome Back'}
                         </h2>
+                        <p style={{ textAlign: 'center', fontSize: '14px', color: '#9ca3af', marginBottom: '28px' }}>
+                            {isSignUp ? 'Join Funverse to track your movies' : 'Sign in to continue to Funverse'}
+                        </p>
 
-                        {/* Google Sign In */}
+                        {/* Google */}
                         <button
                             onClick={handleGoogleLogin}
                             disabled={authLoading}
-                            className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-medium py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 mb-4 disabled:opacity-50"
+                            style={{
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '10px',
+                                padding: '12px',
+                                borderRadius: '12px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: '#fff',
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                opacity: authLoading ? 0.5 : 1,
+                                marginBottom: '20px',
+                            }}
                         >
-                            <svg viewBox="0 0 24 24" className="w-5 h-5">
+                            <svg viewBox="0 0 24 24" width="18" height="18">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -185,44 +416,74 @@ const Header = () => {
                             Continue with Google
                         </button>
 
-                        <div className="flex items-center gap-4 my-4">
-                            <div className="flex-1 h-px bg-white/20"></div>
-                            <span className="text-gray-400 text-sm">or</span>
-                            <div className="flex-1 h-px bg-white/20"></div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }}></div>
+                            <span style={{ color: '#6b7280', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>or</span>
+                            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }}></div>
                         </div>
 
-                        {/* Email/Password Form */}
-                        <form onSubmit={handleAuthSubmit} className="space-y-4">
+                        {/* Form */}
+                        <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {isSignUp && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+                                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#9ca3af', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Name</label>
                                     <input
                                         type="text"
                                         value={authForm.name}
                                         onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
-                                        className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px 16px',
+                                            borderRadius: '12px',
+                                            fontSize: '14px',
+                                            color: '#fff',
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            outline: 'none',
+                                            transition: 'border-color 0.3s',
+                                        }}
                                         placeholder="Your name"
                                     />
                                 </div>
                             )}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#9ca3af', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email</label>
                                 <input
                                     type="email"
                                     value={authForm.email}
                                     onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
-                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 16px',
+                                        borderRadius: '12px',
+                                        fontSize: '14px',
+                                        color: '#fff',
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s',
+                                    }}
                                     placeholder="you@example.com"
                                     required
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#9ca3af', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
                                 <input
                                     type="password"
                                     value={authForm.password}
                                     onChange={(e) => setAuthForm(prev => ({ ...prev, password: e.target.value }))}
-                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 16px',
+                                        borderRadius: '12px',
+                                        fontSize: '14px',
+                                        color: '#fff',
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s',
+                                    }}
                                     placeholder="••••••••"
                                     required
                                     minLength={6}
@@ -230,7 +491,14 @@ const Header = () => {
                             </div>
 
                             {authError && (
-                                <div className="bg-red-500/20 border border-red-500/50 rounded-lg px-4 py-2 text-red-300 text-sm">
+                                <div style={{
+                                    padding: '10px 14px',
+                                    borderRadius: '10px',
+                                    fontSize: '13px',
+                                    color: '#fca5a5',
+                                    background: 'rgba(239,68,68,0.1)',
+                                    border: '1px solid rgba(239,68,68,0.15)',
+                                }}>
                                     {authError}
                                 </div>
                             )}
@@ -238,17 +506,39 @@ const Header = () => {
                             <button
                                 type="submit"
                                 disabled={authLoading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50"
+                                style={{
+                                    width: '100%',
+                                    padding: '12px',
+                                    borderRadius: '12px',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    color: '#fff',
+                                    background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 4px 20px rgba(229, 9, 20, 0.3)',
+                                    transition: 'all 0.3s',
+                                    opacity: authLoading ? 0.5 : 1,
+                                    marginTop: '4px',
+                                }}
                             >
                                 {authLoading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
                             </button>
                         </form>
 
-                        <p className="text-center text-gray-400 text-sm mt-4">
+                        <p style={{ textAlign: 'center', fontSize: '13px', color: '#6b7280', marginTop: '20px' }}>
                             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
                             <button
                                 onClick={() => { setIsSignUp(!isSignUp); setAuthError(''); }}
-                                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                                style={{
+                                    color: '#e50914',
+                                    fontWeight: '600',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    transition: 'color 0.3s',
+                                }}
                             >
                                 {isSignUp ? 'Sign In' : 'Sign Up'}
                             </button>

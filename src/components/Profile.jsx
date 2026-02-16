@@ -1,109 +1,229 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
-import { Link, Navigate } from 'react-router-dom';
-import { getDisplayName, getUserInitials, formatDate } from '../utils/auth';
+import { getDisplayName, getUserInitials } from '../utils/auth';
 
 const Profile = () => {
     const { user, logout } = useAuth();
-    const { getWatchlistStats } = useWatchlist();
-    const stats = getWatchlistStats();
+    const { watchlist } = useWatchlist();
 
-    // Redirect if not authenticated
-    if (!user) {
-        return <Navigate to="/" replace />;
-    }
-
-    const handleLogout = async () => {
-        await logout();
-    };
+    if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4">
-            <div className="max-w-4xl mx-auto">
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
-                    <div className="text-center mb-8">
-                        <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
-                            {getUserInitials(user)}
-                        </div>
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            {getDisplayName(user)}
-                        </h1>
-                        <p className="text-gray-300">Welcome to your movie profile</p>
+        <div style={{
+            minHeight: '100vh',
+            background: '#160000',
+            padding: '40px 20px 80px',
+        }}>
+            <div style={{
+                maxWidth: '600px',
+                margin: '0 auto',
+                animation: 'fadeInUp 0.5s ease-out',
+            }}>
+                {/* Profile Card */}
+                <div style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: '24px',
+                    padding: '40px 32px',
+                    textAlign: 'center',
+                    marginBottom: '24px',
+                }}>
+                    {/* Avatar */}
+                    <div style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '20px',
+                        background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 20px',
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        color: '#fff',
+                        boxShadow: '0 8px 30px rgba(229, 9, 20, 0.3)',
+                    }}>
+                        {getUserInitials(user)}
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {/* Profile Information */}
-                        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                            <h2 className="text-xl font-semibold text-white mb-4">Profile Information</h2>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                                        Full Name
-                                    </label>
-                                    <p className="text-white bg-white/10 px-3 py-2 rounded-lg">
-                                        {user.name || 'Not provided'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                                        Email Address
-                                    </label>
-                                    <p className="text-white bg-white/10 px-3 py-2 rounded-lg">
-                                        {user.email}
-                                    </p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                                        Account Created
-                                    </label>
-                                    <p className="text-white bg-white/10 px-3 py-2 rounded-lg">
-                                        {formatDate(user.$createdAt)}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                    <h1 style={{
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        color: '#fff',
+                        fontFamily: '"Space Grotesk", sans-serif',
+                        marginBottom: '6px',
+                        textAlign: 'center',
+                    }}>
+                        {getDisplayName(user)}
+                    </h1>
+                    <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>
+                        Movie enthusiast
+                    </p>
 
-                        {/* Movie Stats */}
-                        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                            <h2 className="text-xl font-semibold text-white mb-4">Movie Stats</h2>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                                    <span className="text-gray-300">Watchlist Movies</span>
-                                    <span className="text-white font-semibold">{stats.totalMovies}</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                                    <span className="text-gray-300">Average Rating</span>
-                                    <span className="text-white font-semibold">{stats.averageRating}/10</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                                    <span className="text-gray-300">Most Common Year</span>
-                                    <span className="text-white font-semibold">{stats.mostCommonYear || 'N/A'}</span>
-                                </div>
-                                <Link
-                                    to="/watchlist"
-                                    className="block w-full text-center p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
-                                >
-                                    View Watchlist
-                                </Link>
-                            </div>
+                    {/* Stats */}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '16px',
+                        flexWrap: 'wrap',
+                    }}>
+                        <div style={{
+                            padding: '10px 20px',
+                            borderRadius: '12px',
+                            background: 'rgba(229,9,20,0.08)',
+                            border: '1px solid rgba(229,9,20,0.12)',
+                        }}>
+                            <span style={{ fontSize: '20px', fontWeight: '700', color: '#e50914' }}>{watchlist.length}</span>
+                            <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '6px' }}>Watchlist</span>
+                        </div>
+                        <div style={{
+                            padding: '10px 20px',
+                            borderRadius: '12px',
+                            background: 'rgba(234,179,8,0.08)',
+                            border: '1px solid rgba(234,179,8,0.12)',
+                        }}>
+                            <span style={{ fontSize: '20px', fontWeight: '700', color: '#eab308' }}>
+                                {watchlist.length > 0
+                                    ? (watchlist.reduce((acc, m) => acc + (m.vote_average || 0), 0) / watchlist.length).toFixed(1)
+                                    : '0'}
+                            </span>
+                            <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '6px' }}>Avg Rating</span>
+                        </div>
+                        <div style={{
+                            padding: '10px 20px',
+                            borderRadius: '12px',
+                            background: 'rgba(34,197,94,0.08)',
+                            border: '1px solid rgba(34,197,94,0.12)',
+                        }}>
+                            <span style={{ fontSize: '20px', fontWeight: '700', color: '#22c55e' }}>
+                                {new Set(watchlist.map(m => m.original_language)).size || 0}
+                            </span>
+                            <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '6px' }}>Languages</span>
                         </div>
                     </div>
+                </div>
 
-                    <div className="mt-8 flex justify-center gap-4">
-                        <Link
-                            to="/"
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 inline-block"
-                        >
-                            Back to Movies
-                        </Link>
-                        <button
-                            onClick={handleLogout}
-                            className="bg-red-600/80 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                        >
-                            Sign Out
-                        </button>
+                {/* Account Details */}
+                <div style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                }}>
+                    <h3 style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#9ca3af',
+                        marginBottom: '16px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                    }}>
+                        Account Details
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            background: 'rgba(255,255,255,0.02)',
+                        }}>
+                            <span style={{ color: '#6b7280', fontSize: '13px' }}>Email</span>
+                            <span style={{ color: '#fff', fontSize: '13px', fontWeight: '500' }}>{user.email}</span>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            background: 'rgba(255,255,255,0.02)',
+                        }}>
+                            <span style={{ color: '#6b7280', fontSize: '13px' }}>Member since</span>
+                            <span style={{ color: '#fff', fontSize: '13px', fontWeight: '500' }}>
+                                {user.metadata?.creationTime
+                                    ? new Date(user.metadata.creationTime).toLocaleDateString()
+                                    : 'N/A'}
+                            </span>
+                        </div>
                     </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <Link
+                        to="/watchlist"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '14px',
+                            borderRadius: '14px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#fff',
+                            background: 'linear-gradient(135deg, #e50914, #ff3b3f)',
+                            textDecoration: 'none',
+                            boxShadow: '0 4px 20px rgba(229, 9, 20, 0.2)',
+                            transition: 'all 0.3s',
+                        }}
+                    >
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        View Watchlist
+                    </Link>
+                    <Link
+                        to="/"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '14px',
+                            borderRadius: '14px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#FECECE',
+                            background: 'rgba(229,9,20,0.08)',
+                            border: '1px solid rgba(229,9,20,0.15)',
+                            textDecoration: 'none',
+                            transition: 'all 0.3s',
+                        }}
+                    >
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Browse Movies
+                    </Link>
+                    <button
+                        onClick={logout}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '14px',
+                            borderRadius: '14px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: '#f87171',
+                            background: 'rgba(239,68,68,0.06)',
+                            border: '1px solid rgba(239,68,68,0.1)',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                        }}
+                    >
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign Out
+                    </button>
                 </div>
             </div>
         </div>

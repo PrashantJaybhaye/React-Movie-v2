@@ -1,29 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
+const Toast = ({ message, type = 'info', onClose, duration = 4000 }) => {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(false);
-            setTimeout(() => onClose && onClose(), 300); // Wait for animation to complete
+            setTimeout(onClose, 300);
         }, duration);
 
         return () => clearTimeout(timer);
     }, [duration, onClose]);
 
-    const getToastStyles = () => {
-        const baseStyles = "fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg backdrop-blur-lg border transform transition-all duration-300 max-w-sm";
-        
+    const getStyles = () => {
+        const base = {
+            padding: '14px 20px',
+            borderRadius: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+            transition: 'all 0.3s ease',
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(-10px)',
+            animation: 'slideDown 0.3s ease-out',
+            maxWidth: '400px',
+        };
+
         switch (type) {
             case 'success':
-                return `${baseStyles} bg-green-500/20 border-green-500/50 text-green-100`;
+                return { ...base, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.2)', color: '#86efac' };
             case 'error':
-                return `${baseStyles} bg-red-500/20 border-red-500/50 text-red-100`;
+                return { ...base, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.2)', color: '#fca5a5' };
             case 'warning':
-                return `${baseStyles} bg-yellow-500/20 border-yellow-500/50 text-yellow-100`;
+                return { ...base, background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.2)', color: '#fde68a' };
             default:
-                return `${baseStyles} bg-blue-500/20 border-blue-500/50 text-blue-100`;
+                return { ...base, background: 'rgba(229,9,20,0.12)', border: '1px solid rgba(229,9,20,0.2)', color: '#FECECE' };
         }
     };
 
@@ -31,69 +44,76 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
         switch (type) {
             case 'success':
                 return (
-                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <svg width="20" height="20" fill="none" stroke="#22c55e" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                 );
             case 'error':
                 return (
-                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    <svg width="20" height="20" fill="none" stroke="#ef4444" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 );
             case 'warning':
                 return (
-                    <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg width="20" height="20" fill="none" stroke="#eab308" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                 );
             default:
                 return (
-                    <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    <svg width="20" height="20" fill="none" stroke="#e50914" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 );
         }
     };
 
-    if (!isVisible) return null;
-
     return (
-        <div className={`${getToastStyles()} ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-            <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
-                    {getIcon()}
-                </div>
-                <div className="flex-1">
-                    <p className="text-sm font-medium">{message}</p>
-                </div>
-                <button
-                    onClick={() => {
-                        setIsVisible(false);
-                        setTimeout(() => onClose && onClose(), 300);
-                    }}
-                    className="flex-shrink-0 text-gray-400 hover:text-white transition-colors duration-200"
-                >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                </button>
-            </div>
+        <div style={getStyles()}>
+            <div style={{ flexShrink: 0 }}>{getIcon()}</div>
+            <span style={{ fontSize: '14px', fontWeight: '500', flex: 1 }}>{message}</span>
+            <button
+                onClick={() => { setIsVisible(false); setTimeout(onClose, 300); }}
+                style={{
+                    background: 'rgba(255,255,255,0.06)',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px',
+                    cursor: 'pointer',
+                    color: 'inherit',
+                    opacity: 0.6,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    flexShrink: 0,
+                }}
+            >
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
     );
 };
 
-// Toast Container Component
 export const ToastContainer = ({ toasts, removeToast }) => {
     return (
-        <div className="fixed top-4 right-4 z-50 space-y-2">
-            {toasts.map((toast) => (
+        <div style={{
+            position: 'fixed',
+            top: '80px',
+            right: '20px',
+            zIndex: 200,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+        }}>
+            {toasts.map(toast => (
                 <Toast
                     key={toast.id}
                     message={toast.message}
                     type={toast.type}
-                    duration={toast.duration}
                     onClose={() => removeToast(toast.id)}
+                    duration={toast.duration}
                 />
             ))}
         </div>

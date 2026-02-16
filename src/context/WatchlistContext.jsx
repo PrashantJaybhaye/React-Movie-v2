@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
+import {
+    getUserWatchlist,
+    addMovieToWatchlist,
+    removeMovieFromWatchlist,
+    clearUserWatchlist
+} from '../firebase';
 
 const WatchlistContext = createContext();
 
@@ -18,7 +24,7 @@ export const WatchlistProvider = ({ children }) => {
     const { user } = useAuth();
     const { showSuccess, showError } = useToast();
 
-    // Load watchlist from localStorage when user changes
+    // Load watchlist from Firestore when user changes
     useEffect(() => {
         if (user) {
             loadWatchlist();
@@ -27,28 +33,20 @@ export const WatchlistProvider = ({ children }) => {
         }
     }, [user]);
 
-    const loadWatchlist = () => {
+    const loadWatchlist = async () => {
+        if (!user) return;
         try {
-            const savedWatchlist = localStorage.getItem(`watchlist_${user.$id}`);
-            if (savedWatchlist) {
-                setWatchlist(JSON.parse(savedWatchlist));
-            }
+            setLoading(true);
+            const movies = await getUserWatchlist(user.uid);
+            setWatchlist(movies);
         } catch (error) {
             console.error('Failed to load watchlist:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const saveWatchlist = (newWatchlist) => {
-        try {
-            localStorage.setItem(`watchlist_${user.$id}`, JSON.stringify(newWatchlist));
-            setWatchlist(newWatchlist);
-        } catch (error) {
-            console.error('Failed to save watchlist:', error);
-            showError('Failed to save to watchlist');
-        }
-    };
-
-    const addToWatchlist = (movie) => {
+    const addToWatchlist = async (movie) => {
         if (!user) {
             showError('Please log in to add movies to your watchlist');
             return false;
@@ -60,48 +58,56 @@ export const WatchlistProvider = ({ children }) => {
             return false;
         }
 
-        const movieData = {
-            id: movie.id,
-            title: movie.title,
-            poster_path: movie.poster_path,
-            release_date: movie.release_date,
-            vote_average: movie.vote_average,
-            overview: movie.overview,
-            addedAt: new Date().toISOString()
-        };
-
-        const newWatchlist = [...watchlist, movieData];
-        saveWatchlist(newWatchlist);
-        showSuccess(`"${movie.title}" added to your watchlist!`);
-        return true;
+        try {
+            const movieData = await addMovieToWatchlist(user.uid, movie);
+            setWatchlist(prev => [...prev, movieData]);
+            showSuccess(`"${movie.title}" added to your watchlist!`);
+            return true;
+        } catch (error) {
+            console.error('Failed to add to watchlist:', error);
+            showError('Failed to add movie to watchlist');
+            return false;
+        }
     };
 
-    const removeFromWatchlist = (movieId) => {
+    const removeFromWatchlist = async (movieId) => {
         const movieToRemove = watchlist.find(item => item.id === movieId);
         if (!movieToRemove) {
             showError('Movie not found in watchlist');
             return false;
         }
 
-        const newWatchlist = watchlist.filter(item => item.id !== movieId);
-        saveWatchlist(newWatchlist);
-        showSuccess(`"${movieToRemove.title}" removed from your watchlist`);
-        return true;
+        try {
+            await removeMovieFromWatchlist(user.uid, movieId);
+            setWatchlist(prev => prev.filter(item => item.id !== movieId));
+            showSuccess(`"${movieToRemove.title}" removed from your watchlist`);
+            return true;
+        } catch (error) {
+            console.error('Failed to remove from watchlist:', error);
+            showError('Failed to remove movie from watchlist');
+            return false;
+        }
     };
 
     const isInWatchlist = (movieId) => {
         return watchlist.some(item => item.id === movieId);
     };
 
-    const clearWatchlist = () => {
+    const clearWatchlist = async () => {
         if (watchlist.length === 0) {
             showError('Watchlist is already empty');
             return;
         }
 
         if (window.confirm('Are you sure you want to clear your entire watchlist?')) {
-            saveWatchlist([]);
-            showSuccess('Watchlist cleared successfully');
+            try {
+                await clearUserWatchlist(user.uid);
+                setWatchlist([]);
+                showSuccess('Watchlist cleared successfully');
+            } catch (error) {
+                console.error('Failed to clear watchlist:', error);
+                showError('Failed to clear watchlist');
+            }
         }
     };
 

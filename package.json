@@ -17,9 +17,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@tailwindcss/vite": "^4.0.14",
-    "appwrite": "^17.0.1",
     "baseline-browser-mapping": "^2.9.19",
     "dotenv": "^17.2.3",
+    "firebase": "^12.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.28.0",

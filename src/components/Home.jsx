@@ -4,7 +4,7 @@ import Search from './Search';
 import Spinner from './Spinner';
 import MovieCard from './MovieCard';
 import { useDebounce } from 'react-use';
-import { getTrendingMovies, updateSearchCount } from '../appwrite';
+import { getTrendingMovies, updateSearchCount } from '../firebase';
 import { testTMDBConnection } from '../utils/tmdb-test';
 import { getMockMovies } from '../utils/mockMovies';
 

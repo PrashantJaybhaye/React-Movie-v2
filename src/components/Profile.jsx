@@ -1,15 +1,22 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { getDisplayName, getUserInitials, formatDate } from '../utils/auth';
 
 const Profile = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { getWatchlistStats } = useWatchlist();
     const stats = getWatchlistStats();
 
-    // User is guaranteed to be authenticated at this point due to AuthGate
+    // Redirect if not authenticated
+    if (!user) {
+        return <Navigate to="/" replace />;
+    }
+
+    const handleLogout = async () => {
+        await logout();
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4">
@@ -73,7 +80,7 @@ const Profile = () => {
                                     <span className="text-gray-300">Most Common Year</span>
                                     <span className="text-white font-semibold">{stats.mostCommonYear || 'N/A'}</span>
                                 </div>
-                                <Link 
+                                <Link
                                     to="/watchlist"
                                     className="block w-full text-center p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
                                 >
@@ -83,13 +90,19 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="mt-8 text-center">
-                        <Link 
-                            to="/" 
+                    <div className="mt-8 flex justify-center gap-4">
+                        <Link
+                            to="/"
                             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 inline-block"
                         >
                             Back to Movies
                         </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-600/80 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                        >
+                            Sign Out
+                        </button>
                     </div>
                 </div>
             </div>
